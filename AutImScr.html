@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <title>AutoScroll</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=yes, initial-scale=2.0, maximum-scale=2.0, minimum-scale=0.8">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="js/ImageStackV1.js"></script>
+
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<input id="tm" type="text" name="timec" value="2000" onchange="ref()">Frame delay<Br>
+<input id="cnt" type="text" name="filesc" value="10">Number of images<Br>
+<input id="delay" type="text" name="delay" value="2">Start delay<Br>
+<div style="overflow: auto">
+    <div style="float: left" id="ImgAnimated" onclick="pause()"></div>
+</div>
+<div>
+</div>
+<div id="fln"></div>
+<script src="js/ImageStackV1.js"></script>
+<script type="text/javascript">
+
+
+    //AutoScroll
+
+    var j = 0;
+    var ps = 1;
+    var d = document.getElementById('delay');
+
+
+    /* setTimeout(function() {*/
+    function draw() {
+        console.log('draw ');
+        if (ps == 1) {
+            console.log('draw ps=1  ');
+            j = j + 1;
+            if (j > ImgNameArray.length - 1) j = 1;
+            {
+                document.querySelector('.custom-scroll').style.backgroundImage = 'url(img/' + j + '.jpg)';
+                document.getElementById('fln').innerHTML = ' drawscrolled img/' + j + '.jpg';
+            }
+        }
+        else {
+
+            name();
+
+        }
+    }
+
+    function name() {
+
+        console.log('name ');
+        if (ps == -1) {
+
+
+            console.log('clear drawTimer() interval = 200 drawTimer');
+            if (scrollval === 0) {
+                document.getElementById('fln').innerHTML = ' namescrolled img/' + 0 + '.jpg';
+            }
+
+            else if (scrollval) {
+                j = scrollval;
+                scrollval = undefined;
+            }
+            else {
+                document.getElementById('fln').innerHTML = ' namescrolled img/' + j + '.jpg';
+            }
+        }
+    }
+
+    var timerId = setInterval(draw(), document.getElementById('tm').value);
+
+
+    function Timer(fn, t) {
+        var timerObj = setInterval(fn, t);
+
+        this.stop = function () {
+            if (timerObj) {
+                clearInterval(timerObj);
+                timerObj = null;
+            }
+            return this;
+        }
+
+        this.start = function () {
+            if (!timerObj) {
+                this.stop();
+                timerObj = setInterval(fn, t);
+            }
+            return this;
+        }
+
+        this.reset = function (newT) {
+            t = newT;
+            return this.stop().start();
+        }
+    }
+
+    var timer = new Timer(function () {
+        draw();
+    }, document.getElementById('tm').value);
+
+    /* }, d.value*1000);*/
+
+    function ref() {
+        timer.reset(interval);
+    }
+
+    function pause() {
+        ps = ps * (-1);
+    }
+
+
+</script>
+<style type="text/css"> /*Scroll Stuff*/
+.custom-scroll {
+    float: none;
+    margin: 0 auto;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    background-color: #F5F5F5;
+}
+
+.custom-scroll::-webkit-scrollbar {
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+    background-color: #464646;
+}
+
+td {
+    word-wrap: break-word;
+    hyphens: auto;
+}</style>

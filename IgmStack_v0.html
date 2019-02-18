@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+ <title>ImageStack</title>
+ <meta name="viewport"
+       content="width=device-width, user-scalable=yes, initial-scale=2.0, maximum-scale=2.0, minimum-scale=0.8">
+ <meta charset="UTF-8">
+ <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="js/ImageStackV0.js"></script>
+<input id="tm" type="text" name="timec" value="100" onchange="ref()">Frame delay<Br>
+<input id="cnt" type="text" name="filesc" value="18">Number of images<Br>
+<input id="delay" type="text" name="delay" value="2">Start delay<Br>
+<div style="overflow: auto">
+ <div style="float: left" id="ImgAnimated"></div>
+</div>
+<div>
+<br>
+ Есть HTML код с последовательностью изображений (архив прикреплён). Есть фреймворк ImageStackV0.js, который вставляет скрол для этих рисунков.<br>
+ Необходимо написать код на чистом Javascript или переделать существующий ImageStackV0.js так, чтобы:<br>
+ - после i секунд рисунки скролились автоматически и зацикленно по j рисунков;<br>
+ - по клику на рисунок - пауза и показать имя файла;<br>
+ - по следующему клику - рестарт скролла.<br>
+ i и j должны браться из инпутов в HTML коде.<br>
+ </div>
+  <script type="text/javascript"> 
+
+
+// ******************************************************************************
+ var ImgNameArray =  ["1.jpg","2.jpg","3.jpg","4.jpg","5.jpg","6.jpg","7.jpg","8.jpg","9.jpg","10.jpg","11.jpg","12.jpg","13.jpg","14.jpg","15.jpg","16.jpg","17.jpg","18.jpg"] ;
+
+
+console.log(ImgNameArray);	
+console.log(ImgNameArray.length);	
+// ********************************************************************************************
+
+ // ******************** from the list of files, we get the images  *********************************
+ //  var imageList = getImageListV2('action1V2', 7,[1,2,3,4,5,6,7]);
+ var imageList = getImageListV0('img/', ImgNameArray.length,ImgNameArray);
+
+ var stack = new ImageStack({ images: imageList, height: '20rem' , width: '30rem'  });
+    
+  $('#ImgAnimated').append(stack); 
+
+  </script>
+  <style type="text/css"> /*Scroll Stuff*/ .custom-scroll{ float: none; margin: 0 auto; } .custom-scroll::-webkit-scrollbar-track { -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); border-radius: 5px; background-color: #F5F5F5; } .custom-scroll::-webkit-scrollbar { width: 12px; background-color: #F5F5F5; } .custom-scroll::-webkit-scrollbar-thumb { border-radius: 5px; -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3); background-color: #464646; } td{ word-wrap: break-word; hyphens: auto; }</style>
