@@ -8,35 +8,65 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 </head>
-
-<div style="overflow: auto">
-    <div style="float: left" id="ImgAnimated" onclick="pause()"></div>
-</div>
+<div style="overflow: auto" id="container"></div>
 <div><p id="fln">&nbsp;</p></div>
 <div>
     ++Instructions will be here++
 </div>
 <script type="text/javascript">
 
+
     //Variables to be changed on demand
-    var ImageCount = 17; //Total Number of images.
-    var FrRate = 2; //Frame Rate for autoscrolling, sec.
+    var imageList = ['01_Image_2018-12-31_09.23.1501.jpg',
+        '02_Image_2018-12-31_09.23.1502.jpg',
+        '03_Image_2018-12-31_09.23.1503.jpg',
+        '04_Image_2018-12-31_09.23.1504.jpg',
+        '05_Image_2018-12-31_09.23.1505.jpg',
+        '06_Image_2018-12-31_09.23.1506.jpg',
+        '07_Image_2018-12-31_09.23.1507.jpg',
+        '08_Image_2018-12-31_09.23.1508.jpg',
+        '09_Image_2018-12-31_09.23.1509.jpg',
+        '10_Image_2018-12-31_09.23.1510.jpg',
+        '11_Image_2018-12-31_09.23.1511.jpg',
+        '12_Image_2018-12-31_09.23.1512.jpg',
+        '13_Image_2018-12-31_09.23.1513.jpg',
+        '14_Image_2018-12-31_09.23.1514.jpg',
+        '15_Image_2018-12-31_09.23.1515.jpg',
+        '16_Image_2018-12-31_09.23.1516.jpg'];
+
+    var imagePath = 'https://raw.githubusercontent.com/Jastbond/AutoImageGit/master/img1/';
+    var FrRate = 1; //Frame Rate for autoscrolling, sec.
     var delay = 1;  //Autoscrolling start delay, sec.
-    var FrStep = 1;
+    var FrStep = 1; //Number of frames which scrolled in one step
+    var imageHeight = '480px';
+    var imageWidth = '640px';
 
 
    /****** ImageStackV2 ******/
+
+       //Variables for testing, to be deleted in final version
     var scrollval = 0;
-    var ImgNameArray = [];
-        function ImageStack (options) {
+    var img_count;
+    var img_array;
+    var sizeType;
+    var ImageHeight;
+    var scrollobject_height;
+    var sT;
+    var hn05;
+    var hh;
+
+
+    function ImageStack (options) {
 
         var self = this;
 
         self.img_array = options.images;
+            img_array =  self.img_array;
+
 
         self.stack = document.createElement('div');
         self.stack.className = 'custom-scroll text-center';
-        self.stack.id = 'custom-scroll';
+        self.stack.id = 'backgroundWrapper';
         self.stack.style.overflow = 'auto';
         self.stack.style.maxWidth = '100%';
         self.stack.style.height = options.height;
@@ -45,17 +75,18 @@
         self.stack.style.position = 'relative';
 
         var typeRegex = /(\D+)/
-        var sizeType = options.height.match(typeRegex)[0]
+        sizeType = options.height.match(typeRegex)[0]
 
         var numberRegex = /(\d+)/
         self.height_number = Number( options.height.match(numberRegex)[0] )
+            ImageHeight = self.height_number;
 
         self.wrapper = document.createElement('div');
 
         for (var i = 0; i < self.img_array.length; i++) {
 
             var image = document.createElement('img');
-            image.src = self.img_array[i];
+            image.src = imagePath+self.img_array[i];
 
             image.style.display = 'none';
             image.style.position = 'absolute';
@@ -72,22 +103,27 @@
         self.image_elements = self.wrapper.querySelectorAll('img');
 
         self.scrollobject = document.createElement('div');
+        self.scrollobject.id = 'scrollobject';
         self.scrollobject.style.width = '100%';
         self.scrollobject.style.position = 'absolute';
         self.scrollobject.style.zIndex = '2';
-        self.img_count = (self.img_array.length > 15) ? self.img_array.length : 15;
-        self.scrollobject_height = Math.floor( 0.1 * self.img_count * self.height_number );
+        /*self.img_count = (self.img_array.length > 15) ? self.img_array.length : 15;*/
+        self.img_count = self.img_array.length;
+            img_count = self.img_count;
+        self.scrollobject_height = (self.img_count) * self.height_number;
+            scrollobject_height = self.scrollobject_height;
 
         self.scrollobject.style.height = self.scrollobject_height + sizeType;
 
         self.scrollUpdate = function (e) {
 
             self.height_number = self.stack.getBoundingClientRect().height
-            self.scrollobject_height = Math.floor( 0.1 * self.img_count * self.height_number );
+            self.scrollobject_height = (self.img_count) * self.height_number;
+            scrollobject_height = self.scrollobject_height;
+            sT = self.stack.scrollTop
+            hn05 = self.img_array.length
+            hh = self.scrollobject_height / hn05
 
-            var sT = self.stack.scrollTop
-            var hn05 = self.img_array.length - 1
-            var hh = (self.scrollobject_height - self.height_number) / hn05
             scrollval = Math.floor(sT / (hh))
 
             self.currentimg = self.image_elements[scrollval].src
@@ -114,88 +150,73 @@
 
 
     /****** Append HTML code with container and images ***** */
-    for (var i=0; i<ImageCount; i++) {
-        ImgNameArray[i] = i+'.jpg';
-    }
-    var imageList = getImageListV1('img/', ImgNameArray.length,ImgNameArray);
-    var stack = new ImageStack({ images: imageList, height: '240px' , width: '320px'  });
 
-    document.getElementById('ImgAnimated').appendChild(stack);
 
-    function getImageListV1(root_path, num_imgs,names_imgs) {
-        images = []
-        for (i = 0 ; i < num_imgs; i++){
-            var p = root_path  + names_imgs[i]
-            images.push(p)
-        }
-        return images
-    }
+    var stack = new ImageStack({ images: imageList, height: imageHeight , width: imageWidth  });
 
-    function getStack(images){
-        var stack = new ImageStack({
-            images: images,
-            height: '30rem',
-            width: '30rem'
-        });
-        return stack
-    }
-    /****** End of Append ******/
+    document.getElementById('container').appendChild(stack);
 
-    var scrollDiv = document.getElementById('custom-scroll');
-    var scrollStep = (parseInt(getComputedStyle(scrollDiv).height))*(FrStep)/(ImgNameArray.length);
+    /****** End of Append - Start of AutoScroller******/
+
+
+    var scrollObject = document.getElementById('scrollobject');
+    var scrollDiv = document.getElementById('backgroundWrapper');
+   /* var scrollStep = scrollobject_height/imageList.length;*/
+    var scrollStep = parseInt(imageHeight);
+    var j = 0;
+    var ps = 1;
+
+    scrollDiv.style.backgroundImage = 'url('+imagePath+imageList[0]+')';
+
     function pause() {
         ps = ps * (-1);
     }
 
-    var j = 0;
-    var ps = 1;
+    scrollDiv.onclick = pause;
 
     setTimeout(function() {
-    function draw() { console.log('scrollStep'+scrollStep);
+
+    function draw() {
+        console.log ('j='+j+' ,scrollval='+scrollval+' ,pause='+ps+'');
+        console.log ('sT='+sT+' ,hn05='+hn05+' ,hh='+hh+' ,scrollStep='+scrollStep+'');
         if (ps == 1) {
             j = j + FrStep;
-            console.log (j);
-            if (j > ImgNameArray.length - 1) {
+            if (j > imageList.length) {
                 j = 0;
-                document.querySelector('.custom-scroll').style.backgroundImage = 'url(img/' + 0 + '.jpg)';
+                scrollDiv.style.backgroundImage = 'url('+imagePath+imageList[0]+')';
                 scrollDiv.scrollTop = 0;
             }
             else {
-                console.log ('url(img/' + j + '.jpg)');
+
                 /*document.querySelector('.custom-scroll').style.backgroundImage = 'url(img/' + j + '.jpg)';*/
                 document.getElementById('fln').innerHTML = '&nbsp;';
-                scrollDiv.scrollTop = scrollStep*j;
-                console.log('scrollDiv.scrollTop '+scrollDiv.scrollTop)
+                scrollDiv.scrollTop = scrollStep*(j-FrStep);
                 clearInterval(timerId);
                 timerId = setInterval(draw, FrRate*1000);
             }
         }
         else {
-
             clearInterval(timerId);
-            timerId = setInterval(draw, 100);
+            timerId = setInterval(draw, 500);
             if (scrollval === 0) {
-                document.getElementById('fln').innerHTML = 'img/' + 0 + '.jpg';
+                j=0;
+                document.getElementById('fln').innerHTML = imageList[0];
             }
 
-            else if (scrollval) {
-                j = scrollval;
-                scrollval = undefined;
-            }
             else {
-                document.getElementById('fln').innerHTML = 'img/' + j + '.jpg';
+                j = scrollval;
+                document.getElementById('fln').innerHTML = imageList[j];
             }
         }
     }
 
     var timerId = setInterval(draw, FrRate*1000);}, delay*1000);
 
+    /****** End of AutoScroller******/
+
 </script> <!--Scroll Stuff-->
 <style type="text/css">
-.custom-scroll {
-    float: none;
-    margin: 0 auto;
-}
+
 
 .custom-scroll::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
@@ -204,7 +225,7 @@
 }
 
 .custom-scroll::-webkit-scrollbar {
-    width: 15px;
+    width: 20px;
     background-color: #F5F5F5;
 }
 
@@ -214,8 +235,4 @@
     background-color: #464646;
 }
 
-td {
-    word-wrap: break-word;
-    hyphens: auto;
-}
     </style>
